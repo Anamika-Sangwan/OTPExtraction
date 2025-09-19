@@ -1,0 +1,40 @@
+import java.util.regex.*;
+
+public class Child extends Utility {
+    @Override
+    public String getMasterDataFilePath() {
+        return "master_data.csv";
+    }
+
+    @Override
+    public String extractOtp(String message) {
+        if (message == null || message.trim().isEmpty()) {
+            return "nan";
+        }
+
+        // (?i) → case-insensitive
+        // (?<=\\bis\\s*) → lookbehind to ensure "is" (word boundary) before the number
+        // (?:\\d[ -]?){3,7}\\d → 4–8 digits with optional space or dash separators
+        Pattern afterIs = Pattern.compile("(?i)(?<=\\bis\\s*)(?:\\d[ -]?){3,7}\\d\\b");
+        Matcher matcherIs = afterIs.matcher(message);
+        if (matcherIs.find()) {
+            return matcherIs.group().replaceAll("[ -]", "");
+        }
+
+        Pattern general = Pattern.compile("(?<!Rs\\.\\s?)(?<!Rs\\s?)(?<!INR\\s?)\\b(?:\\d[ -]?){3,7}\\d\\b",
+                Pattern.CASE_INSENSITIVE);
+        Matcher matcher = general.matcher(message);
+        while (matcher.find()) {
+            String digits = matcher.group().replaceAll("[ -]", "");
+            try {
+                int val = Integer.parseInt(digits);
+                if (val >= 1900 && val <= 2099)
+                    continue;
+            } catch (NumberFormatException ignored) {
+            }
+            return digits;
+        }
+
+        return "nan";
+    }
+}
