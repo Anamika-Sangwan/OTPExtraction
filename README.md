@@ -16,4 +16,4 @@ Candidate Selection: Picks the highest-scoring token as the OTP.
 
 Optimization: Single regex pass and tokenization upfront to minimize complexity.
 
-Result: Achieved 97.87% accuracy on the OneBanc dataset.
+Result: Achieved 97.87% accuracy on the SMS dataset.
